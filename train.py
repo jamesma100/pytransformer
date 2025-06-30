@@ -1,7 +1,10 @@
 from transformer import *
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-if __name__ == "__main__":
+def train():
     d_model = 128
     ctx_sz = 10
     batch_sz = 100
@@ -28,14 +31,14 @@ if __name__ == "__main__":
     num_epochs = 1000
     num_batches = len(train) // batch_sz
 
-    print("[INFO] training data size: ", len(train))
+    logger.info(f"training data size: {len(train)}")
 
-    print("[INFO] total vocab size: ", len(base) + len(vocab))
-    print("[INFO] B: ", batch_sz)
-    print("[INFO] C: ", ctx_sz)
-    print("[INFO] d_model: ", d_model)
-    print("[INFO] num epochs: ", num_epochs)
-    print("[INFO] num batches: ", num_batches)
+    logger.info(f"total vocab size: {len(base) + len(vocab)}")
+    logger.info(f"B: {batch_sz}")
+    logger.info(f"C: {ctx_sz}")
+    logger.info(f"d_model: {d_model}")
+    logger.info(f"num epochs: {num_epochs}")
+    logger.info(f"num batches: {num_batches}")
 
     transformer = Transformer(ctx_sz, h, d_model, 6, len(base) + len(vocab))
     adam = torch.optim.AdamW(transformer.parameters(), lr=lr)
@@ -56,7 +59,7 @@ if __name__ == "__main__":
             loss.backward()
             adam.step()
         epoch_loss = sum(losses) / len(losses)
-        print("[INFO] epoch loss: ", epoch_loss)
+        logger.info(f"epoch loss: {epoch_loss}")
 
     tokenizer = Tokenizer("")
     transformer.generate(
@@ -66,3 +69,7 @@ if __name__ == "__main__":
         d_model,
         ctx_sz,
     )
+
+if __name__ == "__main__":
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    train()

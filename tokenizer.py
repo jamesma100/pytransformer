@@ -2,6 +2,9 @@ import pandas as pd
 import json
 import os
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Tokenizer:
@@ -91,7 +94,7 @@ class Tokenizer:
         """
         Recursively resolve each entry in vocab and print its associated string
         """
-        print("[INFO] printing generated vocab...")
+        logger.info("printing generated vocab...")
         keys = sorted(vocab.keys())
         for key in keys:
             symbol = self._find_symbol(base, vocab, key)
@@ -116,11 +119,11 @@ class Tokenizer:
             vocab[next_idx] = top_pair
             tokens = self._merge(tokens, top_pair, next_idx)
             next_idx += 1
-            print(f"[INFO] iteration: {i}, vocab size: {len(vocab)}")
+            logger.info(f"iteration: {i}, vocab size: {len(vocab)}")
             i += 1
         final_token_count = len(tokens)
-        print(
-            f"[INFO] BPE compression ratio: {(1 - initial_token_count / final_token_count)}"
+        logger.info(
+            f"BPE compression ratio: {(1 - initial_token_count / final_token_count)}"
         )
         return (tokens, base, vocab)
 
@@ -140,8 +143,10 @@ class Tokenizer:
 
 
 if __name__ == "__main__":
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
     if len(sys.argv) != 3:
-        print("Usage: python3 tokenizer.py <directory path> <vocab size>")
+        logger.error("Usage: python3 tokenizer.py <directory path> <vocab size>")
         sys.exit(1)
 
     dirpath = sys.argv[1]
@@ -159,7 +164,7 @@ if __name__ == "__main__":
     tokens, base, vocab = tokenizer.encode(max_len=vocab_sz)
     decoded = tokenizer.decode(tokens, base, vocab)
     assert decoded == content
-    print(f"[INFO] final vocab size: {len(vocab)}")
+    logger.info(f"final vocab size: {len(vocab)}")
     tokenizer.print_vocab(base, vocab)
 
     with open("./out/tokens.txt", "w+") as fp:
