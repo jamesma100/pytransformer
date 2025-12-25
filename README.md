@@ -1,4 +1,4 @@
-# transformer-from-scratch
+# pytransformer
 
 Pytorch implementation of the original transformer model described in the 2017 [Attention is all you need](https://arxiv.org/abs/1706.03762) paper. This is mostly for educational purposes so I made basically no attempt to optimize for efficiency. I also wrote a simple tokenizer based on [byte pair encoding](https://en.wikipedia.org/wiki/Byte_pair_encoding).
 
